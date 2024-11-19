@@ -1,9 +1,7 @@
 package apifestivos.apifestivos.servicios;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class FechaServicio {
 
@@ -40,47 +38,4 @@ public class FechaServicio {
         return fecha;
     }
 
-    public static List<Date> getFestivosTipo3y4(int año) {
-        List<Date> festivos = new ArrayList<>();
-        Date domingoPascua = getSemanaSanta(año);
-
-        // Festivos tipo 3
-        festivos.add(incrementarDias(domingoPascua, -3)); // Jueves Santo
-        festivos.add(incrementarDias(domingoPascua, -2)); // Viernes Santo
-        festivos.add(incrementarDias(domingoPascua, 40)); // Ascensión del Señor
-        festivos.add(incrementarDias(domingoPascua, 61)); // Corpus Christi
-        festivos.add(incrementarDias(domingoPascua, 68)); // Sagrado Corazón de Jesús
-
-        // Festivos tipo 4
-        festivos.add(siguienteLunes(incrementarDias(domingoPascua, 40))); // Ascensión del Señor (trasladado)
-        festivos.add(siguienteLunes(incrementarDias(domingoPascua, 61))); // Corpus Christi (trasladado)
-        festivos.add(siguienteLunes(incrementarDias(domingoPascua, 68))); // Sagrado Corazón de Jesús (trasladado)
-
-        return festivos;
-    }
-
-    public static String esFestivo(Date fecha, int año) {
-        if (fecha == null) {
-            return "Fecha no válida";
-        }
-
-        List<Date> festivos = getFestivosTipo3y4(año);
-        for (Date festivo : festivos) {
-            if (mismaFecha(fecha, festivo)) {
-                return "Es festivo";
-            }
-        }
-        return "No es festivo";
-    }
-
-    public static boolean mismaFecha(Date fecha1, Date fecha2) {
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(fecha1);
-        cal2.setTime(fecha2);
-
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
-                && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)
-                && cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
-    }
 }

@@ -21,13 +21,13 @@ public class festivoController {
         this.servicio = servicio;
     }
 
-    @GetMapping("/listar")
-    public List<Festivo> listar() {
-        return servicio.listar();
+    @GetMapping("/listar/{año}")
+    public List<Festivo> listar(@PathVariable int año) {
+        return servicio.listar(año);
     }
 
     @GetMapping("/verificar/{año}/{mes}/{dia}")
-    public String verificarFestivo(
+    public String verificar(
             @PathVariable int año,
             @PathVariable int mes,
             @PathVariable int dia) {

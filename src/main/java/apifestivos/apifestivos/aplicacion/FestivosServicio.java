@@ -1,8 +1,10 @@
 package apifestivos.apifestivos.aplicacion;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -22,36 +24,65 @@ public class FestivosServicio implements IFestivosServicio {
     }
 
     @Override
-    public List<Festivo> listar() {
+    public List<Festivo> listar(int año) {
         return repositorio.findAll();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public String verificar(int año, int mes, int dia) {
+        Calendar cal = Calendar.getInstance();
+        cal.setLenient(false);
         try {
-            Date fecha = new Date(año, mes, dia);
+            cal.set(año, mes - 1, dia);
+            cal.getTime();
+        } catch (IllegalArgumentException e) {
+            return "Fecha no válida";
+        }
+        List<Date> festivos = calcularFestivos(año);
 
-            /*Dado que la fecha ingresada no sea valida*/
-            if (dia < 1 || dia > 31 || mes < 1 || mes > 12) {
-                return "Fecha no valida";
-            }
-            /*Encontrar festivos fijos */
-            Optional<Festivo> festivoFijo = repositorio.findByDiaAndMes(dia, mes);
-            if (festivoFijo.isPresent()) {
+        Calendar fechaSolicitada = Calendar.getInstance();
+        fechaSolicitada.set(año, mes - 1, dia);
+
+        for (Date festivo : festivos) {
+            Calendar calFestivo = Calendar.getInstance();
+            calFestivo.setTime(festivo);
+            if (calFestivo.get(Calendar.YEAR) == fechaSolicitada.get(Calendar.YEAR)
+                    && calFestivo.get(Calendar.MONTH) == fechaSolicitada.get(Calendar.MONTH)
+                    && calFestivo.get(Calendar.DAY_OF_MONTH) == fechaSolicitada.get(Calendar.DAY_OF_MONTH)) {
                 return "Es festivo";
             }
-            List<Date> festivos = FechaServicio.getFestivosTipo3y4(año);
-            for (Date festivo : festivos) {
-                if (FechaServicio.mismaFecha(fecha, festivo)) {
-                    return "Es festivo";
+        }
+
+        return "No es festivo";
+    }
+
+    private List<Date> calcularFestivos(int año) {
+        List<Date> festivos = new ArrayList<>();
+
+        Date domingoDePascua = FechaServicio.getSemanaSanta(año);
+
+        List<Festivo> festivosDb = repositorio.findAll();
+        for (Festivo festivo : festivosDb) {
+            Date fechaFestivo;
+            switch (festivo.getIdtipo()) {
+                case 1 ->
+                    fechaFestivo = new GregorianCalendar(año, festivo.getMes() - 1, festivo.getdia()).getTime();
+                case 2 ->
+                    fechaFestivo = FechaServicio.siguienteLunes(
+                            new GregorianCalendar(año, festivo.getMes() - 1, festivo.getdia()).getTime()
+                    );
+                case 3 ->
+                    fechaFestivo = FechaServicio.incrementarDias(domingoDePascua, festivo.getDiaspascua());
+                case 4 ->
+                    fechaFestivo = FechaServicio.siguienteLunes(
+                            FechaServicio.incrementarDias(domingoDePascua, festivo.getDiaspascua())
+                    );
+                default -> {
+                    continue;
                 }
             }
-            return "No es festivo";
-
-        } catch (IllegalArgumentException e) {
-            return "No es festivo";
-
+            festivos.add(fechaFestivo);
         }
+        return festivos;
     }
 }

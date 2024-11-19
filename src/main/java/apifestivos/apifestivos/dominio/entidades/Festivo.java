@@ -30,18 +30,22 @@ public class Festivo {
     @Column(name = "mes")
     private int mes;
 
+    @Column(name = "diaspascua")
+    private int diaspascua;
+
     @Column(name = "idtipo")
     private int idtipo;
 
     public Festivo() {
     }
 
-    public Festivo(String nombre, int dia, Long id, int idtipo, int mes) {
+    public Festivo(String nombre, int dia, Long id, int idtipo, int mes, int diaspascua) {
         this.nombre = nombre;
         this.dia = dia;
         this.id = id;
         this.idtipo = idtipo;
         this.mes = mes;
+        this.diaspascua = diaspascua;
     }
 
     public long getId() {
@@ -74,6 +78,14 @@ public class Festivo {
 
     public void setMes(int mes) {
         this.mes = mes;
+    }
+
+    public int getDiaspascua() {
+        return diaspascua;
+    }
+
+    public void setDiaspascua(int diaspascua) {
+        this.diaspascua = diaspascua;
     }
 
     public int getIdtipo() {
