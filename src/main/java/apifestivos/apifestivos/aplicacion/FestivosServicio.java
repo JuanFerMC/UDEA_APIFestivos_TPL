@@ -52,7 +52,6 @@ public class FestivosServicio implements IFestivosServicio {
                 return "Es festivo";
             }
         }
-
         return "No es festivo";
     }
 
@@ -69,14 +68,12 @@ public class FestivosServicio implements IFestivosServicio {
                     fechaFestivo = new GregorianCalendar(año, festivo.getMes() - 1, festivo.getdia()).getTime();
                 case 2 ->
                     fechaFestivo = FechaServicio.siguienteLunes(
-                            new GregorianCalendar(año, festivo.getMes() - 1, festivo.getdia()).getTime()
-                    );
+                            new GregorianCalendar(año, festivo.getMes() - 1, festivo.getdia()).getTime());
                 case 3 ->
                     fechaFestivo = FechaServicio.incrementarDias(domingoDePascua, festivo.getDiaspascua());
                 case 4 ->
                     fechaFestivo = FechaServicio.siguienteLunes(
-                            FechaServicio.incrementarDias(domingoDePascua, festivo.getDiaspascua())
-                    );
+                            FechaServicio.incrementarDias(domingoDePascua, festivo.getDiaspascua()));
                 default -> {
                     continue;
                 }
