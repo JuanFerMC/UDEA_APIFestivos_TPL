@@ -68,8 +68,8 @@ public class Festivo {
         return dia;
     }
 
-    public void setDia(int Dia) {
-        Dia = dia;
+    public void setDia(int dia) {
+        this.dia = dia;
     }
 
     public int getMes() {
